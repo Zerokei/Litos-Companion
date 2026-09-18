@@ -26,7 +26,9 @@ npm run check:release
 
 保持 `package.json`、`manifest.json` 和 `versions.json` 的版本信息一致。发布标签与清单版本完全一致，例如 `0.1.0`，不加 `v`。
 
-推送版本标签后，发布工作流执行检查与构建，并上传 `main.js`、`manifest.json`、`styles.css` 及许可证文件。主题与插件独立维护、独立发布。
+推送版本标签后，发布工作流执行检查与构建，为产物生成 GitHub 构建来源证明，并仅上传 `main.js`、`manifest.json`、`styles.css`。许可证保留在仓库中，完整声明同时嵌入 `main.js`。主题与插件独立维护、独立发布。
+
+下载发布附件后，可通过 `gh attestation verify main.js -R Zerokei/Litos-Companion` 验证来源；`styles.css` 和 `manifest.json` 同样适用。参见 [GitHub 构建来源证明文档](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations)。
 
 ## 图表依赖
 
