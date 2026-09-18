@@ -1,19 +1,17 @@
 # Litos Companion
 
-[Litos](https://github.com/zerokei/Litos) 的配套 Obsidian 插件，提供主题显示控制与 Mermaid 流程图增强。
+[Litos](https://github.com/zerokei/Litos) 的配套 Obsidian 插件，提供标题控制与 Mermaid ELK 支持。
 
 ## 特性
 
 - **标题控制**：调整二级标题的对齐方式，支持阅读模式与实时预览。
-- **图表增强**：ELK 自动布局、圆角节点、胶囊标签与开放式箭头。
-- **主题适配**：图表配色跟随当前主题，支持深浅色模式与弹出窗口。
-- **本地渲染**：沿用 `mermaid` 代码块，依赖随插件分发，无需联网渲染。
+- **Mermaid ELK 支持**：为 Mermaid 流程图提供 ELK 自动布局。
 
 ## 使用要求
 
 - Obsidian **1.13.7 或更高版本**，仅支持桌面端。
 - 标题控制需要提供 **Companion API 1** 的 Litos 主题。
-- 图表增强可在其他主题下使用，默认关闭，可在插件设置中开启。
+- Mermaid ELK 支持可在其他主题下使用，默认关闭，可在插件设置中开启。
 
 从 [GitHub Releases](https://github.com/Zerokei/Litos-Companion/releases) 下载。安装步骤与功能说明见 [使用指南](docs/usage.md)。
 
