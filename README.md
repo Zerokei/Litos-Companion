@@ -1,37 +1,37 @@
 # Litos Companion
 
-[Litos](https://github.com/zerokei/Litos) 的配套 Obsidian 插件，提供标题控制与 Mermaid ELK 支持。
+An Obsidian companion plugin for [Litos](https://github.com/zerokei/Litos), providing heading controls and Mermaid ELK support.
 
-## 特性
+## Features
 
-- **标题控制**：调整二级标题的对齐方式，支持阅读模式与实时预览。
-- **Mermaid ELK 支持**：为 Mermaid 流程图提供 ELK 自动布局。
+- **Heading controls**: Adjust H2 alignment in Reading view and Live Preview.
+- **Mermaid ELK support**: Use ELK automatic layout for Mermaid flowcharts.
 
-## 使用要求
+## Requirements
 
-- Obsidian **1.13.7 或更高版本**，仅支持桌面端。
-- 标题控制需要提供 **Companion API 1** 的 Litos 主题。
-- Mermaid ELK 支持可在其他主题下使用，默认关闭，可在插件设置中开启。
+- Obsidian **1.13.7 or later** on desktop.
+- Heading controls require a Litos theme version that supports **Companion API 1**.
+- Mermaid ELK support also works with other themes. It is disabled by default and can be enabled in the plugin settings.
 
-从 [GitHub Releases](https://github.com/Zerokei/Litos-Companion/releases) 下载。安装步骤与功能说明见 [使用指南](docs/usage.md)。
+Download from [GitHub Releases](https://github.com/Zerokei/Litos-Companion/releases). See the [user guide](docs/usage.md) for installation and usage instructions.
 
-## 依赖
+## Dependencies
 
-| 依赖 | 版本 | 用途 |
+| Dependency | Version | Purpose |
 | --- | --- | --- |
-| Mermaid | 11.16.1 | 图表解析与渲染 |
-| @mermaid-js/layout-elk | 0.2.0 | ELK 布局集成 |
-| yaml | ^2.9.1 | 图表配置解析 |
+| Mermaid | 11.16.1 | Diagram parsing and rendering |
+| @mermaid-js/layout-elk | 0.2.0 | ELK layout integration |
+| yaml | ^2.9.1 | Diagram configuration parsing |
 
-开发使用 TypeScript、esbuild 与 Vitest。完整依赖见 [package.json](package.json)。
+Built with TypeScript, esbuild, and Vitest. See [package.json](package.json) for the complete dependency list.
 
-## 文档
+## Documentation
 
-- [使用指南](docs/usage.md)
-- [开发指南](docs/development.md)
-- [架构与主题接口](docs/architecture.md)
-- [示例](examples/验收示例.md)与[验收记录](docs/validation.md)
+- [User guide](docs/usage.md)
+- [Development guide](docs/development.md)
+- [Architecture and theme API](docs/architecture.md)
+- [Examples](examples/验收示例.md) and [validation report](docs/validation.md)
 
-## 许可证
+## License
 
-[MIT](LICENSE)。第三方组件适用各自的许可证，详见 [第三方许可证](docs/third-party-notices.txt)。
+[MIT](LICENSE). Third-party components are distributed under their respective licenses; see [third-party notices](docs/third-party-notices.txt).
