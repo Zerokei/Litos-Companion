@@ -1,0 +1,15 @@
+.litos-companion-settings-note {
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+  line-height: var(--line-height-normal);
+}
+/* Each SVG carries its own theme CSS; only the outer frame belongs here. */
+body div.mermaid svg.litos-companion-diagram {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  max-width: 100%;
+  height: auto;
+  /* Obsidian inverts stock Mermaid SVGs in dark mode; these already use dark colors. */
+  filter: none;
+}

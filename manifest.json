@@ -1,0 +1,10 @@
+{
+  "id": "litos-companion",
+  "name": "Litos Companion",
+  "version": "0.1.0",
+  "minAppVersion": "1.13.7",
+  "description": "Litos 主题的显示控制与 Mermaid / ELK 流程图增强。",
+  "author": "ZeroKei",
+  "authorUrl": "https://github.com/zerokei",
+  "isDesktopOnly": true
+}
