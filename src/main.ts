@@ -20,7 +20,7 @@ export default class LitosCompanion extends Plugin {
     this.registerEvent(this.app.workspace.on('css-change', () => {
       this.headings.update(workspaceDocuments(this.app), this.store.value);
       this.diagrams.invalidate(); this.scheduleRefresh();
-      if (this.tab.containerEl.isConnected) this.tab.display();
+      this.tab.update();
     }));
     this.registerEvent(this.app.workspace.on('window-open', (_workspace, win) => {
       this.headings.update([...workspaceDocuments(this.app), win.document], this.store.value);

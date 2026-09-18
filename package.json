@@ -1,6 +1,6 @@
 {
   "name": "litos-companion",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Litos 的显示控制与 Mermaid 流程图增强",
   "type": "module",
@@ -8,7 +8,7 @@
     "dev": "node esbuild.config.mjs --watch",
     "build": "npm run typecheck && node esbuild.config.mjs",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src tests",
+    "lint": "eslint src tests --max-warnings 0",
     "test": "vitest run",
     "check": "npm run lint && npm test && npm run build",
     "check:release": "node scripts/check-release.mjs"
@@ -24,6 +24,7 @@
     "@types/node": "^22.15.17",
     "esbuild": "^0.25.5",
     "eslint": "^9.39.4",
+    "eslint-plugin-obsidianmd": "0.4.2",
     "jsdom": "^26.1.0",
     "obsidian": "1.13.1",
     "typescript": "^5.8.3",

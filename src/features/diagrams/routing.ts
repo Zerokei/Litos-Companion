@@ -45,7 +45,7 @@ export function prepareFlowchart(source: string): string | null {
     const flowchart = record(config.flowchart);
     const layout = flowchart.layout ?? config.layout ?? flowchart.defaultRenderer;
     const look = flowchart.look ?? config.look;
-    if (layout !== undefined && !['elk', 'litos-flowchart'].includes(String(layout))) return null;
+    if (layout !== undefined && layout !== 'elk' && layout !== 'litos-flowchart') return null;
     if (look !== undefined && look !== 'classic') return null;
     // Preserve Obsidian's wiki-link conversion and Mermaid's HTML-label features.
     if (/\[\[|^\s*click\s/m.test(body)) return null;

@@ -1,6 +1,12 @@
-import js from '@eslint/js';
+import { defineConfig } from 'eslint/config';
 import ts from 'typescript-eslint';
-export default ts.config(js.configs.recommended, ...ts.configs.recommended, {
-  files: ['**/*.ts'],
-  rules: { '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }] }
-});
+import obsidianmd from 'eslint-plugin-obsidianmd';
+export default defineConfig([
+  {
+    files: ['src/**/*.ts'],
+    extends: [...obsidianmd.configs.recommended],
+    languageOptions: { parserOptions: { projectService: true } },
+    rules: { '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }] },
+  },
+  { files: ['tests/**/*.ts'], extends: [...ts.configs.recommended] },
+]);

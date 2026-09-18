@@ -3,6 +3,7 @@ import { readPalette } from '../../theme/bridge';
 import { RenderQueue } from './queue';
 import { createLitosLayout } from './layout';
 import { diagramCSS } from './style';
+import { decorateSvg } from './svg';
 
 export class DiagramRuntime {
   private mermaid?: Promise<Mermaid>;
@@ -29,10 +30,9 @@ export class DiagramRuntime {
       const palette = readPalette(targetDocument);
       // Mermaid measures in its own realm's document. Keep a private connected sandbox,
       // and return the SVG to Obsidian so popout windows keep the normal insertion path.
-      const stage = document.createElement('div');
-      stage.style.cssText = 'position:absolute;left:-100000px;top:0;visibility:hidden;pointer-events:none;';
-      stage.style.width = `${container?.getBoundingClientRect().width || 800}px`;
-      document.body.append(stage);
+      const stage = document.body.createDiv();
+      stage.setCssStyles({ position: 'absolute', left: '-100000px', top: '0', visibility: 'hidden', pointerEvents: 'none',
+        width: `${container?.getBoundingClientRect().width || 800}px` });
       try {
         await document.fonts?.ready;
         mermaid.initialize({
@@ -54,13 +54,7 @@ export class DiagramRuntime {
         });
         const result = await mermaid.render(id, source, stage);
         if (!this.alive) return null;
-        const template = document.createElement('template');
-        template.innerHTML = result.svg;
-        const svg = template.content.querySelector('svg');
-        if (!svg) throw new Error('Mermaid did not return SVG');
-        svg.classList.add('litos-companion-diagram');
-        svg.setAttribute('data-litos-layout', 'elk');
-        return { ...result, svg: svg.outerHTML };
+        return { ...result, svg: decorateSvg(result.svg) };
       } finally { stage.remove(); }
     });
   }

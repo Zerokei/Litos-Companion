@@ -1,4 +1,6 @@
-import type { InternalHelpers, LayoutLoaderDefinition } from 'mermaid';
+import type { InternalHelpers, LayoutData, LayoutLoaderDefinition } from 'mermaid';
+
+type MeasuredEdge = LayoutData['edges'][number] & { width?: number; height?: number };
 
 /** ELK handles routing; this adapter measures the final shapes before layout. */
 export function createLitosLayout(elk: LayoutLoaderDefinition): LayoutLoaderDefinition {
@@ -24,8 +26,8 @@ export function createLitosLayout(elk: LayoutLoaderDefinition): LayoutLoaderDefi
           }
           const adapted: InternalHelpers = {
             ...helpers,
-            async insertEdgeLabel(element, edge) {
-              const label = await helpers.insertEdgeLabel(element, edge) as SVGGraphicsElement;
+            async insertEdgeLabel(element: unknown, edge: MeasuredEdge) {
+              const label = await helpers.insertEdgeLabel(element, edge);
               const text = label.querySelector<SVGGraphicsElement>('text');
               const background = label.querySelector<SVGRectElement>('rect.background');
               if (edge.label && text && background) {
@@ -45,8 +47,8 @@ export function createLitosLayout(elk: LayoutLoaderDefinition): LayoutLoaderDefi
               }
               return label;
             },
-            insertEdge(element, edge, ...args) {
-              const points: { x: number; y: number }[] = (edge.points ?? []).map((point: { x: number; y: number }) => ({ ...point }));
+            insertEdge(element: unknown, edge: MeasuredEdge, ...args) {
+              const points = (edge.points ?? []).map(point => ({ ...point }));
               for (const [index, neighbor, arrow] of [[0, 1, edge.arrowTypeStart], [points.length - 1, points.length - 2, edge.arrowTypeEnd]] as const) {
                 const tip = points[index], next = points[neighbor];
                 if (arrow !== 'arrow_point' || !tip || !next) continue;
@@ -59,8 +61,8 @@ export function createLitosLayout(elk: LayoutLoaderDefinition): LayoutLoaderDefi
             },
           };
           // Narrow the D3 selection to the current SVG: do not mutate sibling diagrams.
-          await engine.render(data, svg.selectAll(function () { return [this]; }) as typeof svg, adapted, options);
-          const root = svg.node() as SVGSVGElement | null;
+          await engine.render(data, svg.selectAll(function () { return [this]; }), adapted, options);
+          const root = svg.node();
           for (const marker of root?.querySelectorAll<SVGMarkerElement>('marker') ?? []) {
             const end = /-pointEnd(?:_|$)/.test(marker.id);
             const start = /-pointStart(?:_|$)/.test(marker.id);
@@ -72,8 +74,7 @@ export function createLitosLayout(elk: LayoutLoaderDefinition): LayoutLoaderDefi
             const path = marker.querySelector('path');
             if (!path) continue;
             path.setAttribute('d', end ? 'M -1 -3 L 3 0 L -1 3 M 3 0 L -4 0' : 'M 1 -3 L -3 0 L 1 3 M -3 0 L 4 0');
-            path.style.fill = 'none'; path.style.strokeWidth = '1';
-            path.style.strokeDasharray = 'none'; path.style.strokeLinecap = 'round'; path.style.strokeLinejoin = 'round';
+            path.setCssStyles({ fill: 'none', strokeWidth: '1', strokeDasharray: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' });
           }
         },
       };

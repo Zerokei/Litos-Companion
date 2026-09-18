@@ -1,3 +1,15 @@
+# 0.1.1 Review fixes
+
+Validated on macOS with Obsidian 1.13.7 on 2026-09-18.
+
+- Obsidian recommended ESLint rules and type-aware checks pass with zero errors and warnings. CI now rejects warnings.
+- All 33 tests, TypeScript checks, and production build pass.
+- Declarative settings expose both controls to search; valid values persist through the plugin store.
+- Heading alignment uses CSS classes. Reading view and Live Preview render the expected alignment.
+- SVG decoration uses an inert XML document, with no innerHTML assignment. Mermaid flowcharts retain their classes, namespaces, styles, Chinese labels, pill labels, and open arrows.
+- The four example diagrams retain their routing: two enhanced flowcharts, one native sequence diagram, and one native dagre flowchart.
+- Existing settings and the minimum Obsidian version remain unchanged.
+
 # 0.1.0 验收记录
 
 验证日期：2026-09-18。环境：macOS、Obsidian 1.13.7。使用临时内存视图与虚构内容；未修改现有笔记，未持久安装测试插件，验收结束后恢复原主题样式并关闭临时视图。

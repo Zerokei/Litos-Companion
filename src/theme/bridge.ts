@@ -15,13 +15,13 @@ export function isLitos(doc: Document): boolean {
 // Mermaid derives colors using a parser that does not support all modern CSS colors.
 // Resolve CSS variables through the browser, then normalize to an opaque hex color.
 function resolveColor(doc: Document, input: string, fallback: string): string {
-  const probe = doc.createElement('span');
-  probe.style.color = input || fallback;
-  probe.style.display = 'none';
-  doc.body.append(probe);
+  const probe = doc.body.createSpan();
+  probe.setCssStyles({ color: input || fallback, display: 'none' });
   const resolved = doc.defaultView?.getComputedStyle(probe).color || fallback;
   probe.remove();
-  const context = doc.createElement('canvas').getContext('2d');
+  const canvas = doc.body.createEl('canvas');
+  const context = canvas.getContext('2d');
+  canvas.remove();
   if (!context) return fallback;
   context.fillStyle = fallback;
   context.fillRect(0, 0, 1, 1);

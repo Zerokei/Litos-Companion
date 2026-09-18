@@ -1,7 +1,8 @@
-.litos-companion-settings-note {
-  color: var(--text-muted);
-  font-size: var(--font-ui-small);
-  line-height: var(--line-height-normal);
+body.litos-companion-active.litos-companion-h2-left {
+  --litos-h2-align: left;
+}
+body.litos-companion-active.litos-companion-h2-right {
+  --litos-h2-align: right;
 }
 /* Each SVG carries its own theme CSS; only the outer frame belongs here. */
 body div.mermaid svg.litos-companion-diagram {

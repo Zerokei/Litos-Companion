@@ -8,7 +8,7 @@
 
 ## 主题契约（API 1）
 
-主题在 body 上声明 `--litos-companion-api: 1`，标题使用 `text-align: var(--litos-h2-align, right)`。插件仅在该标识存在时注入带自身作用域的覆盖；卸载时移除。设置保存在插件数据中，切换主题不丢失。
+主题在 body 上声明 `--litos-companion-api: 1`，标题使用 `text-align: var(--litos-h2-align, right)`。插件仅在该标识存在时切换自身的对齐样式类；覆盖规则位于 styles.css，卸载时移除作用类。设置保存在插件数据中，切换主题不丢失。
 
 图表支持以下可选变量，缺省回退到 Obsidian 变量：
 
@@ -33,7 +33,7 @@ ELK 包装器在布局前确定节点与连线标签的真实尺寸，在布局�
 
 主题变更、功能开关和窗口变化由主入口协调。失效的异步结果不会返回增强图；卸载后旧包装器透传，且仅在仍拥有宿主 render 属性时恢复它，避免覆盖其他插件后续安装的包装。
 
-阅读模式使用公开的 `rerender(true)`。Obsidian 1.13.7 的实时预览会缓存图表组件，仅调用 `updateOptions()` 不会重新渲染；适配层在结构检查通过后失效 `currentMode.livePreviewPlugin`，再重新配置扩展，不重建编辑器状态。此字段属于内部兼容接口，升级 Obsidian 时需复验；未知结构下安全跳过，重新打开视图仍可触发渲染。每个窗口的标题样式放在 body 中，避免 Obsidian 自动镜像 head 样式造成重复；兼容已有副本并统一清理。
+阅读模式使用公开的 `rerender(true)`。Obsidian 1.13.7 的实时预览会缓存图表组件，仅调用 `updateOptions()` 不会重新渲染；适配层在结构检查通过后失效 `currentMode.livePreviewPlugin`，再重新配置扩展，不重建编辑器状态。此字段属于内部兼容接口，升级 Obsidian 时需复验；未知结构下安全跳过，重新打开视图仍可触发渲染。标题控制不创建动态样式节点，只为各窗口的 body 切换自身的 CSS 类，并在主题变化、窗口关闭及插件卸载时清理。
 
 ## 验证
 
