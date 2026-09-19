@@ -1,11 +1,14 @@
-# Litos Companion
+![Litos Companion — Read. Think. Make it yours.](assets/brand/companion-product-cover.png)
 
-An Obsidian companion plugin for [Litos](https://github.com/zerokei/Litos), providing heading controls, Mermaid ELK support, and Zen mode.
+Make the [Litos](https://github.com/zerokei/Litos) workspace your own with optional display controls and Mermaid ELK support.
+
+Litos provides the theme; Litos Companion adds controls and diagram capabilities. Install either independently. Heading controls require a compatible Litos theme.
 
 ## Features
 
 - **Zen mode**: Hide workspace controls for a quieter view; toggle from settings or the command palette.
 - **Heading controls**: Adjust H2 alignment in Reading view and Live Preview.
+- **Accent color**: Adjust Obsidian’s native accent color from the plugin settings.
 - **Mermaid ELK support**: Use ELK automatic layout for Mermaid flowcharts.
 
 ## Requirements
