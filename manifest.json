@@ -1,9 +1,9 @@
 {
   "id": "litos-companion",
   "name": "Litos Companion",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "minAppVersion": "1.13.7",
-  "description": "Heading controls and Mermaid ELK support for the Litos theme.",
+  "description": "Heading controls, Mermaid ELK support, Zen mode, and accent color settings for Litos.",
   "author": "ZeroKei",
   "authorUrl": "https://github.com/zerokei",
   "isDesktopOnly": true
