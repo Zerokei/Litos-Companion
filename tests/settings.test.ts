@@ -7,7 +7,7 @@ describe('settings', () => {
   });
   it('preserves valid preferences and discards unsupported values', () => {
     expect(normalizeSettings({ headingAlignment: 'left', diagramsEnabled: true, other: 1 }))
-      .toEqual({ version: 1, headingAlignment: 'left', diagramsEnabled: true });
+      .toEqual({ version: 1, headingAlignment: 'left', diagramsEnabled: true, zenMode: false });
   });
   it('serializes saves and recovers after a failed write', async () => {
     const persist = vi.fn().mockRejectedValueOnce(new Error('disk')).mockResolvedValue(undefined);
@@ -17,8 +17,8 @@ describe('settings', () => {
     await expect(first).rejects.toThrow('disk');
     await second;
     expect(persist.mock.calls.map(([value]) => value)).toEqual([
-      { version: 1, headingAlignment: 'left', diagramsEnabled: false },
-      { version: 1, headingAlignment: 'left', diagramsEnabled: true },
+      { version: 1, headingAlignment: 'left', diagramsEnabled: false, zenMode: false },
+      { version: 1, headingAlignment: 'left', diagramsEnabled: true, zenMode: false },
     ]);
   });
 });

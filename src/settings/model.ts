@@ -2,9 +2,10 @@ export interface CompanionSettings {
   version: 1;
   headingAlignment: 'left' | 'right';
   diagramsEnabled: boolean;
+  zenMode: boolean;
 }
 export const DEFAULT_SETTINGS: CompanionSettings = {
-  version: 1, headingAlignment: 'right', diagramsEnabled: false,
+  version: 1, headingAlignment: 'right', diagramsEnabled: false, zenMode: false,
 };
 export function normalizeSettings(value: unknown): CompanionSettings {
   const saved = value !== null && typeof value === 'object' ? value as Record<string, unknown> : {};
@@ -12,6 +13,7 @@ export function normalizeSettings(value: unknown): CompanionSettings {
     version: 1,
     headingAlignment: saved.headingAlignment === 'left' ? 'left' : 'right',
     diagramsEnabled: saved.diagramsEnabled === true,
+    zenMode: saved.zenMode === true,
   };
 }
 

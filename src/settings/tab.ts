@@ -1,8 +1,9 @@
-import { PluginSettingTab, type App, type Plugin, type SettingDefinitionItem } from 'obsidian';
+import { readAccent, writeAccent } from '../integrations/obsidian/accent';
+import { Notice, PluginSettingTab, type App, type Plugin, type SettingDefinitionItem, type ExtraButtonComponent } from 'obsidian';
 import { isLitos } from '../theme/bridge';
 import { DEFAULT_SETTINGS, type CompanionSettings } from './model';
 
-type SettingKey = 'headingAlignment' | 'diagramsEnabled';
+type SettingKey = 'headingAlignment' | 'diagramsEnabled' | 'zenMode';
 
 export class CompanionSettingTab extends PluginSettingTab {
   constructor(app: App, plugin: Plugin,
@@ -13,8 +14,36 @@ export class CompanionSettingTab extends PluginSettingTab {
   getSettingDefinitions(): SettingDefinitionItem<SettingKey>[] {
     const compatible = isLitos(this.containerEl.ownerDocument);
     return [
+      { type: 'group', heading: '专注显示', items: [{
+        name: 'Zen mode',
+        desc: '隐藏快捷工具栏、侧栏切换按钮、文档操作按钮、状态栏和新建标签加号。保留标签页与路径，可通过命令面板切换退出。',
+        aliases: ['zen', 'focus'],
+        control: { type: 'toggle', key: 'zenMode', defaultValue: false },
+      }] },
       {
         type: 'group', heading: 'Litos 显示', items: [{
+          name: '强调色',
+          desc: '与 Obsidian 外观设置同步，仅影响当前仓库。停用插件后仍保留。',
+          aliases: ['accent', 'color'],
+          render: setting => {
+            const current = readAccent(this.app);
+            if (!current) {
+              setting.setDesc('当前 Obsidian 版本的强调色接口不可用，请使用原生外观设置。');
+              return;
+            }
+            let reset: ExtraButtonComponent | undefined;
+            const apply = (color: string) => {
+              if (!writeAccent(this.app, color)) new Notice('强调色未能更新，请使用原生外观设置。');
+              reset?.setDisabled(!readAccent(this.app)?.custom);
+            };
+            setting.addColorPicker(picker => picker.setValue(current.color).onChange(color => apply(color)));
+            setting.addExtraButton(button => {
+              reset = button;
+              button.setIcon('reset').setTooltip('恢复默认')
+                .setDisabled(!current.custom).onClick(() => { apply(''); this.update(); });
+            });
+          },
+        }, {
           name: '二级标题位置',
           desc: compatible ? '同时调整阅读模式和实时预览中的二级标题。' : '当前主题未提供 Litos 配套接口。选择会保存，在启用兼容的 Litos 主题后生效。',
           aliases: ['H2', 'heading', 'alignment'],
@@ -34,7 +63,7 @@ export class CompanionSettingTab extends PluginSettingTab {
   }
 
   getControlValue(key: string): unknown {
-    if (key === 'headingAlignment' || key === 'diagramsEnabled') return this.settings()[key];
+    if (key === 'headingAlignment' || key === 'diagramsEnabled' || key === 'zenMode') return this.settings()[key];
     return undefined;
   }
 
@@ -42,6 +71,7 @@ export class CompanionSettingTab extends PluginSettingTab {
     if (key === 'headingAlignment' && (value === 'left' || value === 'right')) {
       return this.change({ headingAlignment: value });
     }
+    if (key === 'zenMode' && typeof value === 'boolean') return this.change({ zenMode: value });
     if (key === 'diagramsEnabled' && typeof value === 'boolean') {
       return this.change({ diagramsEnabled: value });
     }

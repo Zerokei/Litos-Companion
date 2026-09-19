@@ -15,7 +15,7 @@ describe('declarative settings', () => {
     const groups = tab.getSettingDefinitions();
     const keys = groups.flatMap(group => 'items' in group ? group.items ?? [] : [])
       .flatMap(item => 'control' in item && item.control ? item.control.key : []);
-    expect(keys).toEqual(['headingAlignment', 'diagramsEnabled']);
+    expect(keys).toEqual(['zenMode', 'headingAlignment', 'diagramsEnabled']);
     expect(tab.getControlValue('headingAlignment')).toBe('left');
     expect(tab.getControlValue('diagramsEnabled')).toBe(false);
     expect(tab.getControlValue('unknown')).toBeUndefined();

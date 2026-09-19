@@ -14,3 +14,18 @@ body div.mermaid svg.litos-companion-diagram {
   /* Obsidian inverts stock Mermaid SVGs in dark mode; these already use dark colors. */
   filter: none;
 }
+
+/* Deliberately override host/theme visibility rules only while Zen mode is on. */
+body.litos-companion-zen .workspace-ribbon,
+body.litos-companion-zen .sidebar-toggle-button,
+body.litos-companion-zen .workspace-tab-header-new-tab,
+body.litos-companion-zen .workspace-tab-header-tab-list,
+body.litos-companion-zen .view-header-nav-buttons,
+body.litos-companion-zen .view-actions,
+body.litos-companion-zen .status-bar {
+  display: none !important;
+}
+/* Keep breadcrumb centering independent of the hidden action groups. */
+body.litos-companion-zen .view-header-title-container {
+  margin-inline: auto;
+}
