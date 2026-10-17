@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "themeName": "Litos",
+  "minimumThemeVersion": "1.1.3",
+  "supportedThemeApis": [1],
+  "diagramDefaults": {
+    "nodeRadius": 16,
+    "edgeLabelRadius": 13,
+    "lineWidth": 1
+  }
+}

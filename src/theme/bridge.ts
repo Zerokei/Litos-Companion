@@ -1,3 +1,7 @@
+import { inspectTheme, THEME_COMPATIBILITY } from './compatibility';
+
+export interface DiagramShape { nodeRadius: number; edgeLabelRadius: number; lineWidth: number }
+export const DEFAULT_DIAGRAM_SHAPE: DiagramShape = THEME_COMPATIBILITY.diagramDefaults;
 export interface DiagramPalette {
   dark: boolean;
   surface: string;
@@ -7,9 +11,26 @@ export interface DiagramPalette {
   line: string;
   label: string;
   font: string;
+  shape: DiagramShape;
 }
 export function isLitos(doc: Document): boolean {
-  return doc.defaultView?.getComputedStyle(doc.body).getPropertyValue('--litos-companion-api').trim() === '1';
+  return inspectTheme(doc).compatible;
+}
+
+export function readDiagramShape(doc: Document): DiagramShape {
+  if (!isLitos(doc)) return { ...DEFAULT_DIAGRAM_SHAPE };
+  const style = doc.defaultView!.getComputedStyle(doc.body);
+  const number = (name: string, fallback: number, min: number, max: number): number => {
+    const raw = style.getPropertyValue(name).trim();
+    if (!/^(?:\d+(?:\.\d+)?|\.\d+)(?:px)?$/.test(raw)) return fallback;
+    const value = Number.parseFloat(raw);
+    return value >= min && value <= max ? value : fallback;
+  };
+  return {
+    nodeRadius: number('--litos-diagram-node-radius', DEFAULT_DIAGRAM_SHAPE.nodeRadius, 0, 64),
+    edgeLabelRadius: number('--litos-diagram-label-radius', DEFAULT_DIAGRAM_SHAPE.edgeLabelRadius, 0, 32),
+    lineWidth: number('--litos-diagram-line-width', DEFAULT_DIAGRAM_SHAPE.lineWidth, 0.5, 4),
+  };
 }
 
 // Mermaid derives colors using a parser that does not support all modern CSS colors.
@@ -33,8 +54,9 @@ function resolveColor(doc: Document, input: string, fallback: string): string {
 export function readPalette(doc: Document): DiagramPalette {
   const style = doc.defaultView!.getComputedStyle(doc.body);
   const dark = doc.body.classList.contains('theme-dark');
+  const compatible = isLitos(doc);
   const color = (name: string, standard: string, fallback: string) =>
-    resolveColor(doc, `var(--litos-diagram-${name}, var(${standard}))`, fallback);
+    resolveColor(doc, compatible ? `var(--litos-diagram-${name}, var(${standard}))` : `var(${standard})`, fallback);
   return {
     dark,
     surface: color('surface', '--background-primary', dark ? '#202020' : '#ffffff'),
@@ -44,5 +66,6 @@ export function readPalette(doc: Document): DiagramPalette {
     line: color('line', '--text-muted', dark ? '#aaaaaa' : '#666666'),
     label: color('label', '--background-primary', dark ? '#202020' : '#ffffff'),
     font: style.getPropertyValue('--font-text').trim() || 'sans-serif',
+    shape: readDiagramShape(doc),
   };
 }

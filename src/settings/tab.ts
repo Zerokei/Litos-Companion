@@ -1,6 +1,7 @@
 import { readAccent, writeAccent } from '../integrations/obsidian/accent';
 import { Notice, PluginSettingTab, type App, type Plugin, type SettingDefinitionItem, type ExtraButtonComponent } from 'obsidian';
 import { isLitos } from '../theme/bridge';
+import { describeThemeCompatibility } from '../theme/compatibility';
 import { DEFAULT_SETTINGS, type CompanionSettings } from './model';
 
 type SettingKey = 'headingAlignment' | 'diagramsEnabled' | 'zenMode';
@@ -14,6 +15,7 @@ export class CompanionSettingTab extends PluginSettingTab {
   getSettingDefinitions(): SettingDefinitionItem<SettingKey>[] {
     const compatible = isLitos(this.containerEl.ownerDocument);
     return [
+      { name: '主题兼容性', desc: describeThemeCompatibility(this.containerEl.ownerDocument) },
       { type: 'group', heading: '专注显示', items: [{
         name: 'Zen mode',
         desc: '隐藏快捷工具栏、侧栏切换按钮、文档操作按钮、状态栏和新建标签加号。保留标签页与路径，可通过命令面板切换退出。',
@@ -45,7 +47,7 @@ export class CompanionSettingTab extends PluginSettingTab {
           },
         }, {
           name: '二级标题位置',
-          desc: compatible ? '同时调整阅读模式和实时预览中的二级标题。' : '当前主题未提供 Litos 配套接口。选择会保存，在启用兼容的 Litos 主题后生效。',
+          desc: compatible ? '同时调整阅读模式和实时预览中的二级标题。' : '选择会保存，在启用兼容的 Litos 主题后生效。',
           aliases: ['H2', 'heading', 'alignment'],
           control: { type: 'dropdown', key: 'headingAlignment', defaultValue: DEFAULT_SETTINGS.headingAlignment,
             options: { right: '靠右（默认）', left: '靠左' } },

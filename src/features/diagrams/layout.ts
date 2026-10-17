@@ -1,15 +1,17 @@
 import type { InternalHelpers, LayoutData, LayoutLoaderDefinition } from 'mermaid';
+import { DEFAULT_DIAGRAM_SHAPE, type DiagramShape } from '../../theme/bridge';
 
 type MeasuredEdge = LayoutData['edges'][number] & { width?: number; height?: number };
 
 /** ELK handles routing; this adapter measures the final shapes before layout. */
-export function createLitosLayout(elk: LayoutLoaderDefinition): LayoutLoaderDefinition {
+export function createLitosLayout(elk: LayoutLoaderDefinition, readShape: () => DiagramShape = () => DEFAULT_DIAGRAM_SHAPE): LayoutLoaderDefinition {
   return {
     name: 'litos-flowchart', algorithm: 'elk.layered',
     loader: async () => {
       const engine = await elk.loader();
       return {
         async render(data, svg, helpers, options) {
+          const shape = readShape();
           for (const node of data.nodes) {
             if (node.isGroup) continue;
             const decision = ['diamond', 'diam', 'decision', 'question'].includes(node.shape ?? '');
@@ -22,7 +24,7 @@ export function createLitosLayout(elk: LayoutLoaderDefinition): LayoutLoaderDefi
             node.padding = 16;
             node.labelPaddingX = 36;
             node.height = Math.max(node.height ?? 0, 60);
-            node.rx = node.ry = 16;
+            node.rx = node.ry = shape.nodeRadius;
           }
           const adapted: InternalHelpers = {
             ...helpers,
@@ -37,8 +39,8 @@ export function createLitosLayout(elk: LayoutLoaderDefinition): LayoutLoaderDefi
                 background.setAttribute('y', String(bounds.y - (height - bounds.height) / 2));
                 background.setAttribute('width', String(bounds.width + 24));
                 background.setAttribute('height', String(height));
-                background.setAttribute('rx', '13');
-                background.setAttribute('ry', '13');
+                background.setAttribute('rx', String(shape.edgeLabelRadius));
+                background.setAttribute('ry', String(shape.edgeLabelRadius));
                 background.style.removeProperty('stroke');
                 const finalBounds = label.getBBox();
                 edge.width = finalBounds.width;
@@ -74,7 +76,7 @@ export function createLitosLayout(elk: LayoutLoaderDefinition): LayoutLoaderDefi
             const path = marker.querySelector('path');
             if (!path) continue;
             path.setAttribute('d', end ? 'M -1 -3 L 3 0 L -1 3 M 3 0 L -4 0' : 'M 1 -3 L -3 0 L 1 3 M -3 0 L 4 0');
-            path.setCssStyles({ fill: 'none', strokeWidth: '1', strokeDasharray: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' });
+            path.setCssStyles({ fill: 'none', strokeWidth: String(shape.lineWidth), strokeDasharray: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' });
           }
         },
       };

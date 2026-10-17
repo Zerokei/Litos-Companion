@@ -5,6 +5,8 @@ import { CompanionSettingTab } from './settings/tab';
 import { HeadingControls } from './features/headings';
 import { DiagramEnhancement } from './features/diagrams';
 import { refreshMarkdown, workspaceDocuments } from './integrations/obsidian/workspace';
+import { readInstalledTheme } from './integrations/obsidian/theme';
+import { describeThemeCompatibility, inspectTheme, setInstalledTheme, type InstalledTheme } from './theme/compatibility';
 
 export default class LitosCompanion extends Plugin {
   private store!: SettingsStore;
@@ -14,6 +16,9 @@ export default class LitosCompanion extends Plugin {
   private tab!: CompanionSettingTab;
   private disposed = false;
   private refreshTimer?: number;
+  private themeGeneration = 0;
+  private installedTheme: InstalledTheme | null = null;
+  private warnedThemes = new Set<string>();
 
   async onload(): Promise<void> {
     this.store = new SettingsStore(await this.loadData(), value => this.saveData(value));
@@ -21,12 +26,10 @@ export default class LitosCompanion extends Plugin {
     this.addSettingTab(this.tab);
     this.addCommand({ id: 'toggle-zen-mode', name: '切换专注模式', callback: () => { void this.updateSettings({ zenMode: !this.store.value.zenMode }).then(() => this.tab.update()); } });
     this.registerEvent(this.app.workspace.on('css-change', () => {
-      this.headings.update(workspaceDocuments(this.app), this.store.value);
-      this.zen.update(workspaceDocuments(this.app), this.store.value.zenMode);
-      this.diagrams.invalidate(); this.scheduleRefresh();
-      this.tab.update();
+      void this.refreshTheme();
     }));
     this.registerEvent(this.app.workspace.on('window-open', (_workspace, win) => {
+      setInstalledTheme(win.document, this.installedTheme);
       this.headings.update([...workspaceDocuments(this.app), win.document], this.store.value);
       this.zen.update([...workspaceDocuments(this.app), win.document], this.store.value.zenMode);
     }));
@@ -36,7 +39,29 @@ export default class LitosCompanion extends Plugin {
     }));
     this.app.workspace.onLayoutReady(() => { if (!this.disposed) void this.applyInitialSettings(); });
   }
+  private async refreshTheme(): Promise<void> {
+    const generation = ++this.themeGeneration;
+    const installed = await readInstalledTheme(this.app);
+    if (this.disposed || generation !== this.themeGeneration) return;
+    this.installedTheme = installed;
+    const documents = workspaceDocuments(this.app);
+    for (const doc of documents) setInstalledTheme(doc, installed);
+    this.headings.update(documents, this.store.value);
+    this.zen.update(documents, this.store.value.zenMode);
+    this.diagrams.invalidate(); this.scheduleRefresh(); this.tab.update();
+    const doc = documents[0];
+    if (!doc) return;
+    const state = inspectTheme(doc);
+    if (state.compatible || state.status === 'other-theme') return;
+    const message = describeThemeCompatibility(doc);
+    if (!this.warnedThemes.has(message)) {
+      this.warnedThemes.add(message);
+      new Notice(message);
+    }
+  }
   private async applyInitialSettings(): Promise<void> {
+    await this.refreshTheme();
+    if (this.disposed) return;
     this.headings.update(workspaceDocuments(this.app), this.store.value);
     this.zen.update(workspaceDocuments(this.app), this.store.value.zenMode);
     try { await this.diagrams.setEnabled(this.store.value.diagramsEnabled); }

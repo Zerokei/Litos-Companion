@@ -1,5 +1,5 @@
 import type { Mermaid, RenderResult } from 'mermaid';
-import { readPalette } from '../../theme/bridge';
+import { DEFAULT_DIAGRAM_SHAPE, readPalette, type DiagramShape } from '../../theme/bridge';
 import { RenderQueue } from './queue';
 import { createLitosLayout } from './layout';
 import { diagramCSS } from './style';
@@ -9,13 +9,14 @@ export class DiagramRuntime {
   private mermaid?: Promise<Mermaid>;
   private queue = new RenderQueue();
   private alive = true;
+  private shape: DiagramShape = DEFAULT_DIAGRAM_SHAPE;
 
   private load(): Promise<Mermaid> {
     if (!this.mermaid) {
       this.mermaid = Promise.all([import('mermaid'), import('@mermaid-js/layout-elk')]).then(([{ default: mermaid }, { default: layouts }]) => {
         const elk = layouts.find(layout => layout.name === 'elk');
         if (!elk) throw new Error('ELK loader unavailable');
-        mermaid.registerLayoutLoaders([...layouts, createLitosLayout(elk)]);
+        mermaid.registerLayoutLoaders([...layouts, createLitosLayout(elk, () => this.shape)]);
         return mermaid;
       });
     }
@@ -28,6 +29,7 @@ export class DiagramRuntime {
       if (!this.alive) return null;
       const targetDocument = container?.ownerDocument ?? document;
       const palette = readPalette(targetDocument);
+      this.shape = palette.shape;
       // Mermaid measures in its own realm's document. Keep a private connected sandbox,
       // and return the SVG to Obsidian so popout windows keep the normal insertion path.
       const stage = document.body.createDiv();
