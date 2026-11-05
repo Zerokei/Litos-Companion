@@ -1,18 +1,20 @@
 export interface CompanionSettings {
-  version: 1;
+  version: 2;
   headingAlignment: 'left' | 'right';
   diagramsEnabled: boolean;
   zenMode: boolean;
 }
 export const DEFAULT_SETTINGS: CompanionSettings = {
-  version: 1, headingAlignment: 'right', diagramsEnabled: false, zenMode: false,
+  version: 2, headingAlignment: 'right', diagramsEnabled: true, zenMode: false,
 };
 export function normalizeSettings(value: unknown): CompanionSettings {
   const saved = value !== null && typeof value === 'object' ? value as Record<string, unknown> : {};
   return {
-    version: 1,
+    version: DEFAULT_SETTINGS.version,
     headingAlignment: saved.headingAlignment === 'left' ? 'left' : 'right',
-    diagramsEnabled: saved.diagramsEnabled === true,
+    // The v1 switch opted all ordinary flowcharts into ELK. V2 lets each diagram opt in.
+    diagramsEnabled: saved.version === 2 && typeof saved.diagramsEnabled === 'boolean'
+      ? saved.diagramsEnabled : DEFAULT_SETTINGS.diagramsEnabled,
     zenMode: saved.zenMode === true,
   };
 }

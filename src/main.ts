@@ -37,6 +37,9 @@ export default class LitosCompanion extends Plugin {
       this.headings.update(workspaceDocuments(this.app).filter(doc => !doc.defaultView?.closed), this.store.value);
       this.zen.update(workspaceDocuments(this.app).filter(doc => !doc.defaultView?.closed), this.store.value.zenMode);
     }));
+    // Install before the first note is mounted, including at vault startup.
+    try { await this.diagrams.setEnabled(this.store.value.diagramsEnabled); }
+    catch (error) { console.error('[Litos Companion]', error); new Notice('图表增强加载失败，内置 Mermaid 仍可使用。'); }
     this.app.workspace.onLayoutReady(() => { if (!this.disposed) void this.applyInitialSettings(); });
   }
   private async refreshTheme(): Promise<void> {
@@ -64,9 +67,6 @@ export default class LitosCompanion extends Plugin {
     if (this.disposed) return;
     this.headings.update(workspaceDocuments(this.app), this.store.value);
     this.zen.update(workspaceDocuments(this.app), this.store.value.zenMode);
-    try { await this.diagrams.setEnabled(this.store.value.diagramsEnabled); }
-    catch (error) { console.error('[Litos Companion]', error); new Notice('图表增强加载失败，内置 Mermaid 仍可使用。'); }
-    if (!this.disposed && this.store.value.diagramsEnabled) this.scheduleRefresh();
   }
   async updateSettings(patch: Partial<Omit<CompanionSettings, 'version'>>): Promise<void> {
     const save = this.store.update(patch);

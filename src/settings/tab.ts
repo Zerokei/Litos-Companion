@@ -55,8 +55,8 @@ export class CompanionSettingTab extends PluginSettingTab {
       },
       {
         type: 'group', heading: '图表增强', items: [{
-          name: '增强 Mermaid 流程图',
-          desc: '为普通 Mermaid 流程图启用 ELK 排列、圆角卡片和胶囊标签。判断节点显示为虚线圆角矩形；配色跟随当前主题，其他图表保持原样。所有更改只影响显示，不修改笔记。',
+          name: '允许流程图使用 ELK',
+          desc: '在 Mermaid 流程图的 config 中写入 layout: elk 即可使用 ELK 布局。其他图表使用 Obsidian 内置渲染。关闭后，所有图表使用内置渲染。',
           aliases: ['ELK', 'flowchart', 'diagram'],
           control: { type: 'toggle', key: 'diagramsEnabled', defaultValue: DEFAULT_SETTINGS.diagramsEnabled },
         }],

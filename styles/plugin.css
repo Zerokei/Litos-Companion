@@ -15,6 +15,23 @@ body div.mermaid svg.litos-companion-diagram {
   filter: none;
 }
 
+/* The host removes SVG style elements from Pele-mounted diagrams. */
+@keyframes litos-diagram-dash {
+  to { stroke-dashoffset: 0; }
+}
+svg.litos-companion-diagram .edge-animation-slow,
+svg.litos-companion-diagram .edge-animation-fast {
+  stroke-dasharray: 9, 5 !important;
+  stroke-dashoffset: 900;
+  stroke-linecap: round;
+}
+svg.litos-companion-diagram .edge-animation-slow {
+  animation: litos-diagram-dash 50s linear infinite;
+}
+svg.litos-companion-diagram .edge-animation-fast {
+  animation: litos-diagram-dash 20s linear infinite;
+}
+
 /* Deliberately override host/theme visibility rules only while Zen mode is on. */
 body.litos-companion-zen .workspace-ribbon,
 body.litos-companion-zen .sidebar-toggle-button,

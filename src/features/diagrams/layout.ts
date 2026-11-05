@@ -1,10 +1,12 @@
 import type { InternalHelpers, LayoutData, LayoutLoaderDefinition } from 'mermaid';
 import { DEFAULT_DIAGRAM_SHAPE, type DiagramShape } from '../../theme/bridge';
+import { preserveSvgPresentation } from './svg';
 
 type MeasuredEdge = LayoutData['edges'][number] & { width?: number; height?: number };
 
 /** ELK handles routing; this adapter measures the final shapes before layout. */
-export function createLitosLayout(elk: LayoutLoaderDefinition, readShape: () => DiagramShape = () => DEFAULT_DIAGRAM_SHAPE): LayoutLoaderDefinition {
+export function createLitosLayout(elk: LayoutLoaderDefinition, readShape: () => DiagramShape = () => DEFAULT_DIAGRAM_SHAPE,
+  embedPresentation: () => boolean = () => false): LayoutLoaderDefinition {
   return {
     name: 'litos-flowchart', algorithm: 'elk.layered',
     loader: async () => {
@@ -78,6 +80,7 @@ export function createLitosLayout(elk: LayoutLoaderDefinition, readShape: () => 
             path.setAttribute('d', end ? 'M -1 -3 L 3 0 L -1 3 M 3 0 L -4 0' : 'M 1 -3 L -3 0 L 1 3 M -3 0 L 4 0');
             path.setCssStyles({ fill: 'none', strokeWidth: String(shape.lineWidth), strokeDasharray: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' });
           }
+          if (root && embedPresentation()) preserveSvgPresentation(root);
         },
       };
     },

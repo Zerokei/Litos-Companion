@@ -32,7 +32,11 @@ export function prepareFlowchart(source: string): string | null {
     }
     let directiveConfig: Config = {};
     let unsupported = false;
-    body = body.replace(/%%\{([\s\S]*?)\}%%/g, (original, directive: string) => {
+    // Consume comments and quoted labels whole so their contents cannot opt into ELK.
+    const tokens = /^[ \t]*%%\{((?:(?!\}%%)[\s\S])*)\}%%[ \t]*(?=\r?$)|%%[^\r\n]*|"(?:\\.|[^"\\])*"|(?:^|;)[ \t]*(click)\s/gm;
+    body = body.replace(tokens, (original, directive?: string, click?: string) => {
+      if (click) unsupported = true;
+      if (directive === undefined) return original;
       const match = /^\s*(?:init|initialize)\s*:\s*([\s\S]*)$/.exec(directive);
       if (!match) { unsupported = true; return original; }
       directiveConfig = merge(directiveConfig, parse(match[1]!));
@@ -40,15 +44,15 @@ export function prepareFlowchart(source: string): string | null {
     });
     if (unsupported) return null;
     const significant = body.replace(/^\s*%%[^\n]*(?:\n|$)/gm, '').trimStart();
-    if (!/^(?:flowchart|graph)\s+(?:TB|TD|BT|LR|RL)\b/.test(significant)) return null;
+    if (!/^(?:flowchart|graph)(?:[ \t]*(?:\r?\n|$)|\s+(?:TB|TD|BT|LR|RL)\b)/.test(significant)) return null;
     const config = merge(directiveConfig, record(metadata.config));
     const flowchart = record(config.flowchart);
-    const layout = flowchart.layout ?? config.layout ?? flowchart.defaultRenderer;
+    const layout = flowchart.layout ?? config.layout;
     const look = flowchart.look ?? config.look;
-    if (layout !== undefined && layout !== 'elk' && layout !== 'litos-flowchart') return null;
+    if (layout !== 'elk') return null;
     if (look !== undefined && look !== 'classic') return null;
-    // Preserve Obsidian's wiki-link conversion and Mermaid's HTML-label features.
-    if (/\[\[|^\s*click\s/m.test(body)) return null;
+    // Preserve Obsidian's wiki-link conversion and native math typesetting.
+    if (body.includes('[[') || body.includes('$$')) return null;
     metadata.config = {
       ...config, layout: 'litos-flowchart', look: 'classic', htmlLabels: false,
       flowchart: { ...flowchart, htmlLabels: false, layout: 'litos-flowchart' },

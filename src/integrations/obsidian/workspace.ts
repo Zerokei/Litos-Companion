@@ -13,10 +13,12 @@ export function workspaceDocuments(app: App): Document[] {
 export function invalidateLivePreview(view: MarkdownView): void {
   const compatible = view as MarkdownView & {
     currentMode?: { livePreviewPlugin?: unknown; sourceMode?: boolean };
+    editMode?: { livePreviewPlugin?: unknown; sourceMode?: boolean };
   };
-  const mode = compatible.currentMode;
-  if (view.getMode() === 'source' && mode?.sourceMode === false && Array.isArray(mode.livePreviewPlugin)) {
-    mode.livePreviewPlugin = null;
+  for (const mode of new Set([compatible.currentMode, compatible.editMode])) {
+    if (mode?.sourceMode === false && Array.isArray(mode.livePreviewPlugin)) {
+      mode.livePreviewPlugin = null;
+    }
   }
 }
 

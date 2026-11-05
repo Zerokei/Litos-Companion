@@ -10,14 +10,14 @@ describe('declarative settings', () => {
     const tab = new CompanionSettingTab({} as App, {} as Plugin, () => ({ ...DEFAULT_SETTINGS, headingAlignment: 'left' }), change);
     return { tab, change };
   };
-  it('exposes both controls to search and reads the plugin store', () => {
+  it('exposes controls to search and reads the plugin store', () => {
     const { tab } = makeTab();
     const groups = tab.getSettingDefinitions();
     const keys = groups.flatMap(group => 'items' in group ? group.items ?? [] : [])
       .flatMap(item => 'control' in item && item.control ? item.control.key : []);
     expect(keys).toEqual(['zenMode', 'headingAlignment', 'diagramsEnabled']);
     expect(tab.getControlValue('headingAlignment')).toBe('left');
-    expect(tab.getControlValue('diagramsEnabled')).toBe(false);
+    expect(tab.getControlValue('diagramsEnabled')).toBe(true);
     expect(tab.getControlValue('unknown')).toBeUndefined();
   });
   it('persists validated values through the plugin callback only', async () => {

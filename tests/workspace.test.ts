@@ -17,4 +17,10 @@ describe('Obsidian live preview compatibility', () => {
     expect(mode.livePreviewPlugin).toEqual([1]);
     expect(() => invalidateLivePreview({ getMode: () => 'source' } as unknown as MarkdownView)).not.toThrow();
   });
+  it('invalidates the dormant live preview while reading', () => {
+    const editMode = { sourceMode: false, livePreviewPlugin: [1], state: { text: 'a note' } };
+    invalidateLivePreview({ getMode: () => 'preview', currentMode: {}, editMode } as unknown as MarkdownView);
+    expect(editMode.livePreviewPlugin).toBeNull();
+    expect(editMode.state.text).toBe('a note');
+  });
 });

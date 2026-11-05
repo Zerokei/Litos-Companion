@@ -9,13 +9,14 @@ Litos provides the theme; Litos Companion adds controls and diagram capabilities
 - **Zen mode**: Hide workspace controls for a quieter view; toggle from settings or the command palette.
 - **Heading controls**: Adjust H2 alignment in Reading view and Live Preview.
 - **Accent color**: Adjust Obsidian’s native accent color from the plugin settings.
-- **Mermaid ELK support**: Use ELK automatic layout for Mermaid flowcharts.
+- **Mermaid ELK support**: Add `layout: elk` in a flowchart’s Mermaid configuration to use ELK for that diagram. Ordinary diagrams use Obsidian’s built-in renderer (Pele in Obsidian 1.15).
 
 ## Requirements
 
 - Obsidian **1.13.7 or later** on desktop.
 - Heading controls require a Litos theme version that supports **Companion API 1**.
-- Mermaid ELK support also works with other themes. It is disabled by default and can be enabled in the plugin settings.
+- Mermaid ELK support works with other themes. You can turn it off for the entire vault in the plugin settings.
+- Flowcharts with wiki links, click interactions, or math are rendered by Obsidian. See the [user guide](docs/usage.md#兼容范围) for the complete compatibility range.
 
 Download from [GitHub Releases](https://github.com/Zerokei/Litos-Companion/releases). See the [user guide](docs/usage.md) for installation and usage instructions.
 

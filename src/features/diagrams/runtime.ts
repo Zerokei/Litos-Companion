@@ -10,26 +10,29 @@ export class DiagramRuntime {
   private queue = new RenderQueue();
   private alive = true;
   private shape: DiagramShape = DEFAULT_DIAGRAM_SHAPE;
+  private embedPresentation = false;
 
   private load(): Promise<Mermaid> {
     if (!this.mermaid) {
       this.mermaid = Promise.all([import('mermaid'), import('@mermaid-js/layout-elk')]).then(([{ default: mermaid }, { default: layouts }]) => {
         const elk = layouts.find(layout => layout.name === 'elk');
         if (!elk) throw new Error('ELK loader unavailable');
-        mermaid.registerLayoutLoaders([...layouts, createLitosLayout(elk, () => this.shape)]);
+        mermaid.registerLayoutLoaders([...layouts, createLitosLayout(elk, () => this.shape, () => this.embedPresentation)]);
         return mermaid;
       });
     }
     return this.mermaid;
   }
-  render(id: string, source: string, container?: Element): Promise<RenderResult | null> {
+  render(id: string, source: string, container?: Element, embedPresentation = false,
+    isCurrent: () => boolean = () => true): Promise<RenderResult | null> {
     return this.queue.run(async () => {
-      if (!this.alive) return null;
+      if (!this.alive || !isCurrent()) return null;
       const mermaid = await this.load();
-      if (!this.alive) return null;
+      if (!this.alive || !isCurrent()) return null;
       const targetDocument = container?.ownerDocument ?? document;
       const palette = readPalette(targetDocument);
       this.shape = palette.shape;
+      this.embedPresentation = embedPresentation;
       // Mermaid measures in its own realm's document. Keep a private connected sandbox,
       // and return the SVG to Obsidian so popout windows keep the normal insertion path.
       const stage = document.body.createDiv();
@@ -37,6 +40,7 @@ export class DiagramRuntime {
         width: `${container?.getBoundingClientRect().width || 800}px` });
       try {
         await document.fonts?.ready;
+        if (!this.alive || !isCurrent()) return null;
         mermaid.initialize({
           startOnLoad: false, suppressErrorRendering: true, securityLevel: 'strict',
           theme: 'base', layout: 'litos-flowchart', look: 'classic', htmlLabels: false,
